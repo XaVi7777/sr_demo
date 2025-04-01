@@ -31,7 +31,7 @@ class SrBlocBuilder<B extends SrBloc<Object?, S, SR>, S, SR>
         context,
         data,
       ),
-      child: BlocBuilder(
+      child: BlocBuilder<B, S>(
         bloc: bloc,
         builder: builder,
         buildWhen: buildWhen,

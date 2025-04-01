@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sr_demo/blocs/image_bloc.dart';
 import 'package:sr_demo/blocs/image_events.dart';
 import 'package:sr_demo/blocs/image_single_results.dart';
+import 'package:sr_demo/blocs/image_states.dart';
 import 'package:sr_demo/screens/all_images_screen.dart';
 import 'package:sr_demo/screens/liked_images_screen.dart';
 import 'package:sr_demo/sr_bloc/sr_bloc_builder.dart';
@@ -19,16 +20,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  
+
   // List of screens to show based on the selected tab
   final List<Widget> _screens = [
     const AllImagesScreen(),
     const LikedImagesScreen(),
   ];
-  
+
   @override
   Widget build(BuildContext context) {
-    return SrBlocBuilder<ImageBloc, dynamic, ImageSingleResult>(
+    return SrBlocBuilder<ImageBloc, ImageState, ImageSingleResult>(
       onSR: _handleSingleResult,
       builder: (context, state) {
         return Scaffold(
@@ -54,13 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-  
+
   /// Handles tab changes in the bottom navigation bar.
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
-    
+
     // Update the BLoC with the appropriate event based on the selected tab
     if (index == 0) {
       context.read<ImageBloc>().add(ViewAllImagesEvent());
@@ -68,9 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
       context.read<ImageBloc>().add(ViewLikedImagesEvent());
     }
   }
-  
+
   /// Handles single results from the BLoC (for showing notifications).
-  void _handleSingleResult(BuildContext context, ImageSingleResult singleResult) {
+  void _handleSingleResult(
+      BuildContext context, ImageSingleResult singleResult) {
     if (singleResult is ImageLikedResult) {
       NotificationUtil.showSuccess(
         'Image by ${singleResult.image.author} added to favorites',
@@ -87,4 +89,4 @@ class _HomeScreenState extends State<HomeScreen> {
       NotificationUtil.showError(singleResult.message);
     }
   }
-} 
+}
